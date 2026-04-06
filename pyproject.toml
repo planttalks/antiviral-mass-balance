@@ -25,17 +25,20 @@ keywords = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
+  "Natural Language :: English",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.8"]
+dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.8", "mypy>=1.8"]
 
 [project.urls]
 Repository = "https://github.com/planttalks/antiviral-mass-balance"
@@ -56,6 +59,11 @@ src = ["."]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+ignore_missing_imports = true
 
 [tool.coverage.run]
 source = ["antiviral_mass_balance"]

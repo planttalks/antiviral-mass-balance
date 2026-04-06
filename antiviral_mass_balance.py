@@ -15,13 +15,35 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 __version__ = "0.1.0"
+__all__ = [
+    "viral_inactivation_percent",
+    "initial_infectivity_pfu_ml",
+    "final_infectivity_pfu_per_g",
+    "final_combined_infectivity_weighted",
+    "final_mixture_infectivity_pfu_per_g",
+    "phytoremediation_efficiency_percent",
+    "translocation_factor",
+    "bioconcentration_factor",
+    "highly_degraded_vp_per_ml",
+    "natural_decay_subtracted_initial",
+    "preharvest_mass_balance",
+    "dilution_after_spike",
+    "PlantPartLoads",
+    "PreharvestMassBalance",
+    "MS2_GENOME_BP",
+    "MS2_MOLECULAR_WEIGHT_EQ9",
+    "T4_GENOME_BP",
+    "T4_MOLECULAR_WEIGHT_EQ9",
+    "AVOGADRO",
+]
 
-# MS2 / T4 defaults from the manuscript (Eq.9 narrative)
+# MS2 / T4 genome and mass constants from the manuscript (Eq.9 narrative)
 MS2_GENOME_BP = 3569
 # Manuscript average mass term for MS2 (inside Eq.9 as published)
 MS2_MOLECULAR_WEIGHT_EQ9 = 330
 T4_GENOME_BP = 169_000
-T4_MOLECULAR_WEIGHT_EQ9 = 660  # manuscript average mass term for T4 (dsDNA-style)
+# Manuscript average mass term for T4 (inside Eq.9 as published)
+T4_MOLECULAR_WEIGHT_EQ9 = 660
 
 AVOGADRO = 6.022e23
 
@@ -129,6 +151,7 @@ class PlantPartLoads:
 
     @property
     def total_accounted(self) -> float:
+        """Sum of Ap + IAp + HDp in the same unit system."""
         return self.infective_ap + self.inactivated_iap + self.highly_degraded_hdp
 
 
@@ -161,6 +184,7 @@ class PreharvestMassBalance:
 
     @property
     def residual_fraction(self) -> float:
+        """Fraction of adjusted spike unaccounted for (negative = over-recovery from assay bias)."""
         if self.n0_eff_adj <= 0:
             raise ValueError("n0_eff_adj must be positive")
         return self.n_residual / self.n0_eff_adj
