@@ -77,6 +77,16 @@ pytest --cov=antiviral_mass_balance --cov-fail-under=85
 
 Workflow `.github/workflows/ci.yml` runs Ruff and pytest on Python 3.10–3.12 on each push and pull request to `main`.
 
+### First-time push to GitHub
+
+The remote is set to [github.com/planttalks/antiviral-mass-balance](https://github.com/planttalks/antiviral-mass-balance). Create that repository on GitHub under [@planttalks](https://github.com/planttalks) (empty repo: no README, no `.gitignore` template). Then from this folder run:
+
+```bash
+git push -u origin main
+```
+
+Use a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) or SSH if HTTPS asks for credentials.
+
 ## Citation
 
 See `CITATION.cff` for software metadata. Cite the *Chemosphere* article for the experimental and modeling context.
