@@ -54,7 +54,11 @@ pytest --cov=antiviral_mass_balance --cov-fail-under=85
 
 ## Citation
 
-Please cite the article DOI: [10.1016/j.chemosphere.2023.141101](https://doi.org/10.1016/j.chemosphere.2023.141101) and the software release in `CITATION.cff`.
+Please cite:
+
+Zure D, Kuo H-W D, Drizo A. Insights of phytoremediation mechanisms for viruses based on in-vitro, in-vivo and in-silico assessments of selected herbal plants. *Chemosphere*. 2024;351:141101. doi:[10.1016/j.chemosphere.2023.141101](https://doi.org/10.1016/j.chemosphere.2023.141101).
+
+Also cite the software release recorded in `CITATION.cff`.
 
 ## License
 
