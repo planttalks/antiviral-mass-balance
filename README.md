@@ -36,7 +36,7 @@ Zure D, Kuo H-W D, Drizo A. *Insights of phytoremediation mechanisms for viruses
 5. Estimate HDp from nucleic-acid mass (Eq.9).
 6. Subtract blank decay and close the mass balance with `preharvest_mass_balance`.
 
-See `manuscript.md` for experimental details and `tests/test_antiviral_mass_balance.py` for executable examples.
+See `https://doi.org/10.1016/j.chemosphere.2023.141101` for experimental details and `tests/test_antiviral_mass_balance.py` for executable examples.
 
 ## Install
 
