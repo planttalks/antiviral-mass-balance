@@ -1,4 +1,4 @@
-# Antiviral mass-balance (Chemosphere companion code)
+# Antiviral mass-balance
 
 [![CI](https://github.com/planttalks/antiviral-mass-balance/actions/workflows/ci.yml/badge.svg)](https://github.com/planttalks/antiviral-mass-balance/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
