@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+title: "Antiviral mass-balance helpers (Chemosphere companion code)"
+message: "Cite the Chemosphere article for methods; cite this repository for the software version you used."
+type: software
+authors:
+  - family-names: Zure
+    given-names: Diaiti
+    orcid: "https://orcid.org/0000-0003-2263-6571"
+  - family-names: Kuo
+    given-names: Hsion-Wen David
+  - family-names: Drizo
+    given-names: Aleksandra
+repository-code: "https://github.com/planttalks/antiviral-mass-balance"
+url: "https://github.com/planttalks/antiviral-mass-balance"
+license: MIT
+version: 0.1.0
+date-released: "2026-04-06"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Zure
+      given-names: Diaiti
+      orcid: "https://orcid.org/0000-0003-2263-6571"
+    - family-names: Kuo
+      given-names: Hsion-Wen David
+    - family-names: Drizo
+      given-names: Aleksandra
+  title: "Insights of phytoremediation mechanisms for viruses based on in-vitro, in-vivo and in-silico assessments of selected herbal plants"
+  doi: "10.1016/j.chemosphere.2023.141101"
+  year: 2024
+  volume: 351
+  journal: Chemosphere
+  url: "https://www.sciencedirect.com/science/article/abs/pii/S0045653523033714"
