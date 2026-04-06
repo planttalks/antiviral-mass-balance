@@ -1,4 +1,4 @@
-# Antiviral mass-balance (Chemosphere companion code)
+# Antiviral mass-balance
 
 **Repository:** [github.com/planttalks/antiviral-mass-balance](https://github.com/planttalks/antiviral-mass-balance) · **Maintainer:** [@planttalks](https://github.com/planttalks)
 
