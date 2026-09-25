@@ -124,7 +124,7 @@ function sheetTitle(input) {
   const bits = [String(input.herb || "").trim(), virusLabel(input.virus)];
   if (readNumber(input.hours) !== null) bits.push(`${input.hours} h`);
   const title = bits.filter((bit) => bit).join(" / ");
-  return title || "Untitled sheet";
+  return title || "Untitled record";
 }
 
 function setStatus(message) {
@@ -157,7 +157,7 @@ function applyBlankMode() {
 
 function syncLegend(part) {
   const name = part.querySelector('[data-field="name"]').value.trim();
-  part.querySelector(".legend-name").textContent = name || "Part";
+  part.querySelector(".legend-name").textContent = name || "Plant part";
 }
 
 function renumberParts() {
@@ -250,7 +250,7 @@ function markErrors(result) {
   list.replaceChildren();
   for (const error of result.errors) {
     const item = document.createElement("li");
-    item.textContent = error.message;
+    item.textContent = displayError(error.message);
     list.append(item);
   }
 }
@@ -272,23 +272,55 @@ function joinWords(items) {
   return `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`;
 }
 
+const PYTHON_MESSAGES = {
+  "initial_infectivity must be positive": "The initial value must be greater than zero.",
+  "dilution_factor and virus_diluted_volume_ml must be positive":
+    "The dilution and the inoculum volume must be greater than zero.",
+  "fresh_weight_g must be positive": "Fresh weight must be greater than zero.",
+  "pi_by_part and mass_by_part must share at least one key":
+    "Combined infectivity requires a matching infectivity and fresh weight.",
+  "sum of masses must be positive": "The sum of fresh weights must be greater than zero.",
+  "sum_fwt_parts_g must be positive": "The sum of fresh weights must be greater than zero.",
+  "initial_particles must be positive": "The initial concentration must be greater than zero.",
+  "viral_particles_root must be positive": "The root particle count must be greater than zero.",
+  "viral_particles_water must be positive": "The water particle count must be greater than zero.",
+  "target_length_bp and molecular_weight_eq9 must be positive":
+    "Genome length and the mass term must be greater than zero.",
+  "n0_eff_adj must be positive": "The adjusted initial amount must be greater than zero.",
+  "total volume must be positive": "Total volume must be greater than zero.",
+};
+
+function displayError(message) {
+  return PYTHON_MESSAGES[message] || message;
+}
+
 function resultLead(result) {
-  if (result.errors.length) return "Fix the marked fields. Partial results stay on the sheet.";
+  if (result.errors.length) {
+    return "Correct the marked fields. Results that can be calculated are still shown.";
+  }
   if (!result.balance) {
-    const names = { spike: "the spike", blank: "the blank", water: "the water titer" };
+    const names = {
+      spike: "the initial spike",
+      blank: "the blank decay",
+      water: "the water concentration",
+    };
     const missing = result.missing.map((key) => names[key]).filter(Boolean);
-    if (missing.length) return `Enter ${joinWords(missing)} to close the balance.`;
-    return "A harvested part is missing an infective total.";
+    if (missing.length) return `Enter ${joinWords(missing)} to close the mass balance.`;
+    return "A harvested part does not have an infective total.";
   }
   const residual = result.balance.residualFraction;
-  let lead = "The water and the parts match the adjusted spike.";
-  if (residual > 0) lead = "Some of the adjusted spike is not in the water or the parts.";
-  if (residual < 0) lead = "The water and the parts add up to more than the adjusted spike.";
+  let lead = "The water and the plant parts account for the adjusted initial amount.";
+  if (residual > 0) {
+    lead = "Part of the adjusted initial amount is not recovered in the water or the plant parts.";
+  }
+  if (residual < 0) lead = "The water and the plant parts exceed the adjusted initial amount.";
   if (result.hdpIncluded) {
-    return `${lead} HDp totals were added. Keep them in this closure only when they use the spike unit.`;
+    return `${lead} Highly degraded particle totals are included in this closure. Include them only when they use the same unit as the initial spike.`;
   }
   const showedHdp = result.parts.some((part) => part.hdpPerMl !== null);
-  if (showedHdp) return `${lead} HDp is calculated and left out of the closure.`;
+  if (showedHdp) {
+    return `${lead} Highly degraded particles are calculated and excluded from the closure.`;
+  }
   return lead;
 }
 
@@ -298,26 +330,26 @@ function renderResults(input, result) {
   $("result-lead").textContent = resultLead(result);
   $("spike-hint").textContent =
     result.c0 === null
-      ? "C0 appears here after the stock and the volumes."
-      : `C0 ${withUnit(result.c0, unit)}. Culture volume ${formatCount(result.cultureVolumeMl)} mL.`;
+      ? "The initial concentration is shown after the stock concentration and both volumes are entered."
+      : `Initial concentration (C0) is ${withUnit(result.c0, unit)}. Culture volume is ${formatCount(result.cultureVolumeMl)} mL.`;
   $("blank-hint").textContent =
     result.blankDecayPercent === null
-      ? "Blank decay is removed before the closure."
-      : `Blank decay ${formatPercent(result.blankDecayPercent)}.`;
+      ? "Natural decay from the herb-free blank is subtracted before closure."
+      : `Blank decay is ${formatPercent(result.blankDecayPercent)}. This value is subtracted before closure.`;
   $("water-hint").textContent =
     result.pePercent === null
-      ? "Removal from the bulk water appears here."
-      : `Removal from the water ${formatPercent(result.pePercent)}.`;
+      ? "Phytoremediation efficiency is shown after the initial and final water concentrations are entered."
+      : `Phytoremediation efficiency is ${formatPercent(result.pePercent)}.`;
 
   const numbers = $("result-numbers");
   numbers.replaceChildren();
-  addLine(numbers, "C0", withUnit(result.c0, `${unit}/mL`), "panel-c0");
-  addLine(numbers, "Blank", formatPercent(result.blankDecayPercent), "panel-blank");
-  addLine(numbers, "PE", formatPercent(result.pePercent), "panel-pe");
+  addLine(numbers, "Initial concentration (C0)", withUnit(result.c0, `${unit}/mL`), "panel-c0");
+  addLine(numbers, "Blank decay", formatPercent(result.blankDecayPercent), "panel-blank");
+  addLine(numbers, "Phytoremediation efficiency", formatPercent(result.pePercent), "panel-pe");
   if (result.balance) {
-    addLine(numbers, "Adjusted spike", withUnit(result.balance.n0EffAdj, unit), "panel-n0");
-    addLine(numbers, "Water", withUnit(result.balance.nWater, unit), "panel-water");
-    addLine(numbers, "Plant", withUnit(result.balance.nPlantTotal, unit), "panel-plant");
+    addLine(numbers, "Adjusted initial amount", withUnit(result.balance.n0EffAdj, unit), "panel-n0");
+    addLine(numbers, "Water total", withUnit(result.balance.nWater, unit), "panel-water");
+    addLine(numbers, "Plant total", withUnit(result.balance.nPlantTotal, unit), "panel-plant");
     addLine(numbers, "Residual", withUnit(result.balance.nResidual, unit), "panel-residual-count");
     addLine(numbers, "Closure", formatPercent(result.balance.closureFraction * 100), "panel-closure");
     addLine(numbers, "Residual fraction", formatPercent(result.balance.residualFraction * 100), "panel-residual");
@@ -325,14 +357,14 @@ function renderResults(input, result) {
     addLine(numbers, "Closure", "n/a", "panel-closure");
     addLine(numbers, "Residual fraction", "n/a", "panel-residual");
   }
-  if (result.tf !== null) addLine(numbers, "TF", formatCount(result.tf), "panel-tf");
-  if (result.bcf !== null) addLine(numbers, "BCF", formatCount(result.bcf), "panel-bcf");
+  if (result.tf !== null) addLine(numbers, "Translocation factor", formatCount(result.tf), "panel-tf");
+  if (result.bcf !== null) addLine(numbers, "Bioconcentration factor", formatCount(result.bcf), "panel-bcf");
   const weighted = result.parts.filter((part) => part.used && part.pi !== null && part.massG > 0);
   if (weighted.length >= 2 && result.combinedPi !== null) {
-    addLine(numbers, "Eq. 4", withUnit(result.combinedPi, `${unit}/g`), "panel-eq4");
+    addLine(numbers, "Combined infectivity (Eq. 4)", withUnit(result.combinedPi, `${unit}/g`), "panel-eq4");
   }
   if (result.mixturePi !== null) {
-    addLine(numbers, "Eq. 5", withUnit(result.mixturePi, `${unit}/g`), "panel-eq5");
+    addLine(numbers, "Mixture infectivity (Eq. 5)", withUnit(result.mixturePi, `${unit}/g`), "panel-eq5");
   }
 
   const parts = $("result-parts");
@@ -345,16 +377,18 @@ function renderResults(input, result) {
     title.textContent = part.name;
     block.append(title);
     const lines = [];
-    if (part.a !== null) lines.push(`A ${withUnit(part.a, `${unit}/mL`)}`);
-    if (part.pi !== null) lines.push(`PI ${withUnit(part.pi, `${unit}/g`)}`);
-    if (part.infective !== null) lines.push(`Infective ${withUnit(part.infective, unit)}`);
-    if (part.inactivated !== null) lines.push(`Inactivated ${withUnit(part.inactivated, unit)}`);
-    if (part.hdpPerMl !== null) lines.push(`HDp ${withUnit(part.hdpPerMl, "Vp/mL")}`);
+    if (part.a !== null) lines.push(`Infectivity (A) ${withUnit(part.a, `${unit}/mL`)}`);
+    if (part.pi !== null) lines.push(`Infectivity per gram (PI) ${withUnit(part.pi, `${unit}/g`)}`);
+    if (part.infective !== null) lines.push(`Infective total ${withUnit(part.infective, unit)}`);
+    if (part.inactivated !== null) lines.push(`Inactivated total ${withUnit(part.inactivated, unit)}`);
+    if (part.hdpPerMl !== null) {
+      lines.push(`Highly degraded particles ${withUnit(part.hdpPerMl, "Vp/mL")}`);
+    }
     if (part.hdpTotal !== null) {
       lines.push(
         part.includedHdp
-          ? `HDp total ${withUnit(part.hdpTotal, "Vp")} in the closure`
-          : `HDp total ${withUnit(part.hdpTotal, "Vp")} left out`,
+          ? `Highly degraded particle total ${withUnit(part.hdpTotal, "Vp")} included in the closure`
+          : `Highly degraded particle total ${withUnit(part.hdpTotal, "Vp")} excluded from the closure`,
       );
     }
     for (const line of lines) {
@@ -375,24 +409,28 @@ function notebookText(input, result, unit) {
   const lines = [sheetTitle(input)];
   if (input.date) lines.push(input.date);
   if (input.operator) lines.push(input.operator);
-  lines.push(`Unit ${unit}`);
-  if (result.c0 !== null) lines.push(`C0 ${withUnit(result.c0, `${unit}/mL`)}`);
-  if (result.cultureVolumeMl !== null) lines.push(`Volume ${formatCount(result.cultureVolumeMl)} mL`);
-  if (result.blankDecayPercent !== null) lines.push(`Blank ${formatPercent(result.blankDecayPercent)}`);
-  if (result.pePercent !== null) lines.push(`PE ${formatPercent(result.pePercent)}`);
+  lines.push(`Measurement unit ${unit}`);
+  if (result.c0 !== null) lines.push(`Initial concentration (C0) ${withUnit(result.c0, `${unit}/mL`)}`);
+  if (result.cultureVolumeMl !== null) {
+    lines.push(`Culture volume ${formatCount(result.cultureVolumeMl)} mL`);
+  }
+  if (result.blankDecayPercent !== null) lines.push(`Blank decay ${formatPercent(result.blankDecayPercent)}`);
+  if (result.pePercent !== null) {
+    lines.push(`Phytoremediation efficiency ${formatPercent(result.pePercent)}`);
+  }
   if (result.balance) {
-    lines.push(`Adjusted spike ${withUnit(result.balance.n0EffAdj, unit)}`);
-    lines.push(`Water ${withUnit(result.balance.nWater, unit)}`);
-    lines.push(`Plant ${withUnit(result.balance.nPlantTotal, unit)}`);
+    lines.push(`Adjusted initial amount ${withUnit(result.balance.n0EffAdj, unit)}`);
+    lines.push(`Water total ${withUnit(result.balance.nWater, unit)}`);
+    lines.push(`Plant total ${withUnit(result.balance.nPlantTotal, unit)}`);
     lines.push(`Residual ${withUnit(result.balance.nResidual, unit)}`);
     lines.push(`Closure ${formatPercent(result.balance.closureFraction * 100)}`);
     lines.push(`Residual fraction ${formatPercent(result.balance.residualFraction * 100)}`);
   }
-  if (result.tf !== null) lines.push(`TF ${formatCount(result.tf)}`);
-  if (result.bcf !== null) lines.push(`BCF ${formatCount(result.bcf)}`);
+  if (result.tf !== null) lines.push(`Translocation factor ${formatCount(result.tf)}`);
+  if (result.bcf !== null) lines.push(`Bioconcentration factor ${formatCount(result.bcf)}`);
   for (const part of result.parts.filter((row) => row.used)) {
     lines.push(
-      `${part.name}: infective ${formatCount(part.infective)} inactivated ${formatCount(part.inactivated)} HDp ${formatCount(part.hdpTotal)}`,
+      `${part.name}: infective total ${formatCount(part.infective)}, inactivated total ${formatCount(part.inactivated)} and highly degraded particles ${formatCount(part.hdpTotal)}`,
     );
   }
   if (input.notes) lines.push(input.notes);
@@ -424,10 +462,12 @@ function refreshCounts() {
   const records = loadJournal();
   const text =
     records === null
-      ? "This browser blocked local storage."
+      ? "Local storage is blocked in this browser."
       : records.length === 0
-        ? "No sheets on this browser."
-        : `${records.length} ${records.length === 1 ? "sheet" : "sheets"} on this browser.`;
+        ? "No records are stored in this browser."
+        : records.length === 1
+          ? "1 record is stored in this browser."
+          : `${records.length} records are stored in this browser.`;
   $("browser-count").textContent = text;
   if ($("journal-count")) $("journal-count").textContent = text;
 }
@@ -440,17 +480,17 @@ function renderJournal() {
   refreshCounts();
   if (records === null) {
     empty.hidden = false;
-    empty.textContent = "This browser blocked local storage. The sheet still calculates.";
+    empty.textContent = "Local storage is blocked in this browser. The calculation still runs.";
     return;
   }
   empty.hidden = records.length > 0;
-  empty.textContent = "No sheets on this browser. Save one from the sheet.";
+  empty.textContent = "No records are stored in this browser. Save a record from the calculation sheet.";
   for (const record of records) {
     const item = document.createElement("li");
     const open = document.createElement("button");
     open.type = "button";
     open.className = "journal-open";
-    open.textContent = record.title || "Untitled sheet";
+    open.textContent = record.title || "Untitled record";
     open.addEventListener("click", () => openRecord(record));
     const when = document.createElement("p");
     when.className = "journal-when";
@@ -461,7 +501,7 @@ function renderJournal() {
     const remove = document.createElement("button");
     remove.type = "button";
     remove.className = "secondary";
-    remove.textContent = "Delete";
+    remove.textContent = "Delete record";
     remove.addEventListener("click", () => deleteRecord(record.id, remove));
     item.append(open, when, remove);
     list.append(item);
@@ -471,18 +511,18 @@ function renderJournal() {
 function openRecord(record) {
   currentId = record.id;
   fillForm(record.input);
-  setStatus("Opened a saved sheet.");
+  setStatus("Record opened.");
   location.hash = "#sheet";
 }
 
 function deleteRecord(id, button) {
   if (button.dataset.armed !== "yes") {
     button.dataset.armed = "yes";
-    button.textContent = "Confirm delete";
+    button.textContent = "Confirm deletion";
     window.setTimeout(() => {
       if (!button.isConnected) return;
       button.dataset.armed = "no";
-      button.textContent = "Delete";
+      button.textContent = "Delete record";
     }, 4000);
     return;
   }
@@ -496,7 +536,7 @@ function deleteRecord(id, button) {
 function saveSheet() {
   const records = loadJournal();
   if (records === null) {
-    setStatus("This browser blocked local storage. Export the sheet instead.");
+    setStatus("Local storage is blocked. The calculation still runs. Export the record to keep a copy.");
     return;
   }
   const input = readForm();
@@ -510,7 +550,7 @@ function saveSheet() {
   };
   writeJournal([record, ...records.filter((item) => item.id !== id)]);
   refreshCounts();
-  setStatus(`Saved. ${sheetTitle(input)} is on this browser.`);
+  setStatus(`Record saved in this browser. ${sheetTitle(input)}.`);
 }
 
 function plainResult(result) {
@@ -590,16 +630,16 @@ async function copyNotebook() {
   const text = $("notebook").textContent;
   try {
     await navigator.clipboard.writeText(text);
-    setStatus("Copied the notebook lines.");
+    setStatus("Results copied.");
   } catch {
-    setStatus("Select the notebook lines and copy them.");
+    setStatus("Select the result text and copy it.");
   }
 }
 
 function loadExample(example) {
   currentId = null;
   clearArmed = false;
-  $("clear-sheet").textContent = "Clear";
+  $("clear-sheet").textContent = "Clear form";
   fillForm({ ...emptyInput(), ...example.input, date: today() });
   setStatus(example.note);
 }
@@ -608,18 +648,18 @@ function clearSheet() {
   const button = $("clear-sheet");
   if (!clearArmed) {
     clearArmed = true;
-    button.textContent = "Confirm clear";
+    button.textContent = "Confirm clear form";
     window.setTimeout(() => {
       clearArmed = false;
-      button.textContent = "Clear";
+      button.textContent = "Clear form";
     }, 4000);
     return;
   }
   clearArmed = false;
-  button.textContent = "Clear";
+  button.textContent = "Clear form";
   currentId = null;
   fillForm(emptyInput());
-  setStatus("Cleared.");
+  setStatus("Form cleared.");
 }
 
 function showView(name) {
@@ -644,8 +684,8 @@ function route(moveFocus) {
 
 function renderNet() {
   $("net-status").textContent = navigator.onLine
-    ? "Equations run on this browser. A network is not required after the first load."
-    : "Offline. The sheet and the journal still open.";
+    ? "Equations are calculated in this browser. A network connection is not required after the first visit."
+    : "The browser is offline. The calculation sheet and stored records remain available.";
 }
 
 function bind() {

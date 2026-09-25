@@ -156,7 +156,7 @@ function requireFinite(errors, id, value, label) {
   const parsed = readNumber(value);
   if (parsed === null) return null;
   if (Number.isNaN(parsed)) {
-    invalid(errors, id, `${label} is not a number.`);
+    invalid(errors, id, `${label} must be a number.`);
     return null;
   }
   return parsed;
@@ -225,12 +225,16 @@ function resolvePart(part, index, genome, errors) {
   const plaqueComplete = plaqueFields.every((value) => value !== null);
 
   if (plaqueStarted && !plaqueComplete) {
-    invalid(errors, `${id}-plaque`, `${name} needs a plaque count, a dilution and an inoculum volume.`);
+    invalid(errors, `${id}-plaque`, `${name} requires a plaque count, a dilution and an inoculum volume.`);
   }
 
   if (plaqueComplete) {
     if (row.massG === null || extract === null) {
-      invalid(errors, `${id}-mass`, `${name} needs a fresh weight and an extract volume to turn plaques into a total.`);
+      invalid(
+        errors,
+        `${id}-mass`,
+        `${name} requires a fresh weight and an extract volume before the plaque count can be converted to a total.`,
+      );
     } else {
       try {
         row.a = initialInfectivityPfuMl(plaqueCount, dilution, inoculum);
@@ -248,14 +252,14 @@ function resolvePart(part, index, genome, errors) {
   }
 
   if (row.used && row.infective === null && !plaqueStarted) {
-    invalid(errors, `${id}-infective`, `${name} has no infective total.`);
+    invalid(errors, `${id}-infective`, `${name} does not have an infective total.`);
   }
 
   if (fraction !== null && fraction < 0) {
-    invalid(errors, `${id}-fraction`, `${name} inactivated fraction cannot be negative.`);
+    invalid(errors, `${id}-fraction`, `${name} inactivated fraction must be zero or greater.`);
   }
   if (manualInactivated !== null && manualInactivated < 0) {
-    invalid(errors, `${id}-inactivated`, `${name} inactivated total cannot be negative.`);
+    invalid(errors, `${id}-inactivated`, `${name} inactivated total must be zero or greater.`);
   }
 
   if (manualInactivated !== null) {
@@ -268,13 +272,21 @@ function resolvePart(part, index, genome, errors) {
 
   if (dna !== null) {
     if (genome.lengthBp === null || genome.molecularWeight === null) {
-      invalid(errors, "genomeLength", "Enter a genome length and a mass term before using a NanoDrop reading.");
+      invalid(
+        errors,
+        "genomeLength",
+        "A genome length and a mass term are required before a NanoDrop reading can be used.",
+      );
     } else {
       try {
         row.hdpPerMl = highlyDegradedVpPerMl(dna, genome.lengthBp, genome.molecularWeight);
         const volume = extract === null ? null : extract;
         if (volume === null) {
-          invalid(errors, `${id}-extract`, `${name} needs an extract volume to turn HDp per mL into a total.`);
+          invalid(
+            errors,
+            `${id}-extract`,
+            `${name} requires an extract volume to convert the highly degraded particle concentration to a total.`,
+          );
         } else {
           row.hdpTotal = row.hdpPerMl * volume;
         }
@@ -286,7 +298,11 @@ function resolvePart(part, index, genome, errors) {
 
   if (part.includeHdp) {
     if (row.hdpTotal === null) {
-      invalid(errors, `${id}-dna`, `${name} is marked to enter the closure, but HDp has no total yet.`);
+      invalid(
+        errors,
+        `${id}-dna`,
+        `${name} is included in the closure, but the highly degraded particle total is not yet available.`,
+      );
     } else {
       row.includedHdp = row.hdpTotal;
     }
@@ -330,8 +346,8 @@ export function computeSheet(input) {
 
   let blankDecayPercent = null;
   if (input.blankMode === "pair") {
-    const initial = requireFinite(errors, "blankInitial", input.blankInitial, "Blank initial titer");
-    const finalTiter = requireFinite(errors, "blankFinal", input.blankFinal, "Blank final titer");
+    const initial = requireFinite(errors, "blankInitial", input.blankInitial, "Initial blank titer");
+    const finalTiter = requireFinite(errors, "blankFinal", input.blankFinal, "Blank titer at harvest");
     if (initial !== null && finalTiter !== null) {
       try {
         blankDecayPercent = viralInactivationPercent(initial, finalTiter);
@@ -339,7 +355,7 @@ export function computeSheet(input) {
         invalid(errors, "blankInitial", caught instanceof Error ? caught.message : String(caught));
       }
     } else if (initial !== null || finalTiter !== null) {
-      invalid(errors, "blankInitial", "Blank titers need both the start and the end.");
+      invalid(errors, "blankInitial", "Both the initial blank titer and the harvest blank titer are required.");
     }
   } else {
     blankDecayPercent = requireFinite(
@@ -371,7 +387,7 @@ export function computeSheet(input) {
     errors,
     "molecularWeight",
     input.molecularWeight,
-    "Molecular weight term",
+    "Mass term",
   );
   const genome = { lengthBp: genomeLength, molecularWeight };
 
@@ -401,7 +417,7 @@ export function computeSheet(input) {
     errors,
     "mixtureHerb",
     input.mixtureWholeHerbG,
-    "Whole herb fresh weight",
+    "Whole plant fresh weight",
   );
   const mixtureStarted = [mixtureA, mixtureExtract, mixtureSum, mixtureHerb].some((value) => value !== null);
   let mixturePi = null;
@@ -412,7 +428,7 @@ export function computeSheet(input) {
       invalid(errors, "mixtureSum", caught instanceof Error ? caught.message : String(caught));
     }
   } else if (mixtureStarted) {
-    invalid(errors, "mixtureA", "The mixture block needs all four values.");
+    invalid(errors, "mixtureA", "Equation 5 requires all four mixture values.");
   }
 
   const target = requireFinite(errors, "targetParticles", input.targetParticles, "Target particles");
@@ -457,7 +473,11 @@ export function computeSheet(input) {
         });
         if (balance.n0EffAdj <= 0) {
           balance = null;
-          invalid(errors, "blankDecayPercent", "Adjusted spike is not positive. Check the blank decay.");
+          invalid(
+            errors,
+            "blankDecayPercent",
+            "The adjusted initial amount must be greater than zero. Review the blank decay.",
+          );
         }
       } catch (caught) {
         invalid(errors, "blankDecayPercent", caught instanceof Error ? caught.message : String(caught));

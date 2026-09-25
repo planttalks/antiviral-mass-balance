@@ -9,6 +9,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `field-sheet/`: browser worksheet for Eq. 1 to Eq. 9 and the pre-harvest closure. Records stay in the browser. HDp stays out of the closure until the part is marked.
 - `python field-sheet/serve.py`, `npm run dev` and `npm start` serve that sheet at http://127.0.0.1:43118.
 
+### Changed
+- Field-sheet wording now uses scientific Grade 10 English. The equations are unchanged.
+
 ## [0.1.0] – 2026-04-06
 
 ### Added

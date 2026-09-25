@@ -14,18 +14,18 @@ function partLoad(name, massG, waterFactor, inactivatedFraction, dnaScale, water
   };
 }
 
-/** Illustrative Ocimum basilicum sheet. Part totals follow examples/ms2_t4_worked_example.py. */
+/** Illustrative Ocimum basilicum record. Part totals follow examples/ms2_t4_worked_example.py. */
 export function ms2WorkedExample() {
   const water = dilutionAfterSpike(2e8, 1, 50) * (1 - 0.646);
   return {
-    note: "Illustrative MS2 sheet for Ocimum basilicum at 4 h. Part totals follow the worked example. HDp is shown and is not in the closure.",
+    note: "Illustrative MS2 record for Ocimum basilicum at 4 h. Part totals follow the worked example. Highly degraded particles are calculated and excluded from the closure.",
     input: {
       herb: "Ocimum basilicum",
       virus: "ms2",
       unitSystem: "PFU",
       hours: 4,
       notes:
-        "Illustrative MS2 sheet. Part totals follow examples/ms2_t4_worked_example.py. HDp is shown and is not in the closure.",
+        "Illustrative MS2 record. Part totals follow the worked example in this repository. Highly degraded particles are calculated and excluded from the closure.",
       stockConcentration: 2e8,
       stockVolumeMl: 1,
       diluentVolumeMl: 50,
@@ -46,17 +46,17 @@ export function ms2WorkedExample() {
   };
 }
 
-/** T4 spike from the worked example. Water is back-calculated from the reported 65.8% removal. */
+/** T4 record from the worked example. The water titer is calculated from the reported 65.8% removal. */
 export function t4ReportedWater() {
   const water = dilutionAfterSpike(2.37e7, 1, 50) * (1 - 0.658);
   return {
-    note: "T4 spike from the worked example. The water titer is back-calculated from the reported 65.8% removal. Parts are empty.",
+    note: "T4 record from the worked example. The water titer is calculated from the reported 65.8% removal. Plant parts are empty.",
     input: {
       virus: "t4",
       unitSystem: "PFU",
       hours: 4,
       notes:
-        "T4 spike. Water titer is back-calculated from the reported 65.8% removal. Parts are empty.",
+        "T4 record. The water titer is calculated from the reported 65.8% removal. Plant parts are empty.",
       stockConcentration: 2.37e7,
       stockVolumeMl: 1,
       diluentVolumeMl: 50,

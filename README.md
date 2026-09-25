@@ -18,9 +18,9 @@ python field-sheet/serve.py
 
 `npm run dev` and `npm start` start that same server.
 
-Open [http://127.0.0.1:43118](http://127.0.0.1:43118). Load the MS2 example to see a full closure. Records stay in the browser. Nothing is uploaded.
+Open [http://127.0.0.1:43118](http://127.0.0.1:43118). The MS2 example shows a complete closure. Records remain in the browser. No data are uploaded.
 
-Eq. 9 is shown on each part and left out of the closure until you mark it. Mark it only when that total is already in the same unit as the spike.
+Equation 9 is reported for each part and is excluded from the closure until that part is selected. Select it only when the highly degraded total uses the same unit as the initial spike.
 
 ## Scope
 

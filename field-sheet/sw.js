@@ -1,4 +1,4 @@
-const CACHE = "amb-field-sheet-v2";
+const CACHE = "amb-field-sheet-v3";
 const FILES = [
   "./",
   "./index.html",

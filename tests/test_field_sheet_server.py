@@ -31,7 +31,7 @@ def test_field_sheet_server_serves_index() -> None:
             body = response.read().decode("utf-8")
             assert response.status == 200
         assert "Mass-balance sheet" in body
-        assert "What the vessel still holds." in body
+        assert "Pre-harvest mass balance" in body
     finally:
         httpd.shutdown()
         httpd.server_close()

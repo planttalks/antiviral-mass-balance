@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mass-balance sheet</title>
+    <title>Pre-harvest mass-balance sheet</title>
     <meta
       name="description"
-      content="A field sheet for pre-harvest antiviral mass balance. Eq. 1 to Eq. 9, closed in the browser."
+      content="A calculation sheet for the pre-harvest antiviral mass balance. Equations 1 to 9 are applied in the browser."
     />
     <meta name="theme-color" content="#efe6d2" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -22,13 +22,13 @@
     <link rel="stylesheet" href="./sheet.css" />
   </head>
   <body>
-    <a class="skip" href="#content">Skip to the sheet</a>
+    <a class="skip" href="#content">Skip to the calculation</a>
     <header class="site-header">
       <div class="header-inner">
         <a class="wordmark" href="#sheet">Mass-balance sheet</a>
         <nav aria-label="Sections">
-          <a href="#sheet" data-view="sheet">Sheet</a>
-          <a href="#journal" data-view="journal">Journal</a>
+          <a href="#sheet" data-view="sheet">Calculation</a>
+          <a href="#journal" data-view="journal">Records</a>
           <a href="#limits" data-view="limits">Limits</a>
         </nav>
       </div>
@@ -37,53 +37,53 @@
       <section id="view-sheet">
         <div class="intro">
           <div>
-            <p class="sheet-kicker">Spike, blank, parts, closure</p>
-            <h1 tabindex="-1">What the vessel still holds.</h1>
+            <p class="sheet-kicker">Culture, blank, plant parts and closure</p>
+            <h1 tabindex="-1">Pre-harvest mass balance</h1>
             <p class="lede">
-              Enter the culture, the blank and each harvested part. The sheet applies Eq. 1 to Eq. 9 and
-              closes the pre-harvest balance.
+              Record the culture, the herb-free blank and each harvested part. This sheet calculates
+              Equations 1 to 9 and the pre-harvest mass balance.
             </p>
             <div class="actions no-print">
               <button type="button" id="load-ms2">Load MS2 example</button>
-              <button type="button" id="load-t4" class="secondary">Load T4 water</button>
-              <button type="button" id="clear-sheet" class="secondary">Clear</button>
+              <button type="button" id="load-t4" class="secondary">Load T4 water titer</button>
+              <button type="button" id="clear-sheet" class="secondary">Clear form</button>
             </div>
             <p id="status" class="hint" role="status"></p>
           </div>
           <aside class="label-sheet">
-            <p class="sheet-kicker">On this browser</p>
-            <p id="browser-count">No sheets on this browser.</p>
-            <p class="hint">One unit per sheet. A PFU is not a gene copy.</p>
-            <p><a href="#limits">Read the limits</a></p>
+            <p class="sheet-kicker">Stored in this browser</p>
+            <p id="browser-count">No records are stored in this browser.</p>
+            <p class="hint">Use one measurement unit for the whole record. Plaque-forming units and gene copies are different units.</p>
+            <p><a href="#limits">Read the limits of this sheet</a></p>
           </aside>
         </div>
 
         <div class="sheet-grid">
           <form id="sheet-form" novalidate>
             <section class="block">
-              <h2 class="section-rule">Sheet</h2>
+              <h2 class="section-rule">Record</h2>
               <div class="fields two">
                 <label class="field">
-                  <span>Herb</span>
+                  <span>Plant</span>
                   <input id="herb" name="herb" type="text" autocomplete="off" />
                 </label>
                 <label class="field">
-                  <span>Virus</span>
+                  <span>Surrogate virus</span>
                   <select id="virus" name="virus">
                     <option value="ms2">MS2</option>
                     <option value="t4">T4</option>
-                    <option value="other">Other</option>
+                    <option value="other">Other virus</option>
                   </select>
                 </label>
                 <label class="field">
-                  <span>Unit</span>
+                  <span>Measurement unit</span>
                   <select id="unitSystem" name="unitSystem">
                     <option value="PFU">PFU</option>
                     <option value="gene copies">Gene copies</option>
                   </select>
                 </label>
                 <label class="field">
-                  <span>Operator</span>
+                  <span>Recorded by</span>
                   <input id="operator" name="operator" type="text" autocomplete="name" />
                 </label>
                 <label class="field">
@@ -91,7 +91,7 @@
                   <input id="date" name="date" type="date" />
                 </label>
                 <label class="field">
-                  <span>Hours</span>
+                  <span>Exposure time (h)</span>
                   <input id="hours" name="hours" type="text" inputmode="decimal" spellcheck="false" />
                 </label>
               </div>
@@ -102,10 +102,10 @@
             </section>
 
             <section class="block">
-              <h2 class="section-rule">Spike</h2>
+              <h2 class="section-rule">Initial spike</h2>
               <div class="fields three">
                 <label class="field">
-                  <span>Stock concentration</span>
+                  <span>Stock concentration (per mL)</span>
                   <input
                     id="stockConcentration"
                     data-error-id="stockConcentration"
@@ -139,29 +139,29 @@
                 </label>
               </div>
               <label class="field">
-                <span>Volume at harvest (mL)</span>
+                <span>Culture volume at harvest (mL)</span>
                 <input
                   id="cultureVolumeMl"
                   data-error-id="cultureVolumeMl"
                   type="text"
                   inputmode="decimal"
                   spellcheck="false"
-                  placeholder="Blank uses stock plus diluent"
+                  placeholder="Leave empty to use stock volume plus diluent volume"
                 />
               </label>
-              <p id="spike-hint" class="hint">C0 appears here after the stock and the volumes.</p>
+              <p id="spike-hint" class="hint">The initial concentration is shown after the stock concentration and both volumes are entered.</p>
             </section>
 
             <section class="block">
-              <h2 class="section-rule">Blank, Eq. 1</h2>
+              <h2 class="section-rule">Natural decay, Equation 1</h2>
               <div class="choice-row">
                 <label class="check">
                   <input type="radio" name="blankMode" value="percent" checked />
-                  <span>I have the blank percent</span>
+                  <span>Blank decay is already known (%)</span>
                 </label>
                 <label class="check">
                   <input type="radio" name="blankMode" value="pair" />
-                  <span>Compute it from two titers</span>
+                  <span>Calculate blank decay from two titers</span>
                 </label>
               </div>
               <div id="blank-percent-fields" class="fields">
@@ -179,7 +179,7 @@
               </div>
               <div id="blank-pair-fields" class="fields two" hidden>
                 <label class="field">
-                  <span>Blank initial</span>
+                  <span>Initial blank titer</span>
                   <input
                     id="blankInitial"
                     data-error-id="blankInitial"
@@ -189,7 +189,7 @@
                   />
                 </label>
                 <label class="field">
-                  <span>Blank at harvest</span>
+                  <span>Blank titer at harvest</span>
                   <input
                     id="blankFinal"
                     data-error-id="blankFinal"
@@ -199,11 +199,11 @@
                   />
                 </label>
               </div>
-              <p id="blank-hint" class="hint">Blank decay is removed before the closure.</p>
+              <p id="blank-hint" class="hint">Natural decay from the herb-free blank is subtracted before closure.</p>
             </section>
 
             <section class="block">
-              <h2 class="section-rule">Water at harvest, Eq. 6</h2>
+              <h2 class="section-rule">Bulk water at harvest, Equation 6</h2>
               <label class="field">
                 <span>Water concentration</span>
                 <input
@@ -214,14 +214,14 @@
                   spellcheck="false"
                 />
               </label>
-              <p id="water-hint" class="hint">Removal from the bulk water appears here.</p>
+              <p id="water-hint" class="hint">Phytoremediation efficiency is shown after the initial and final water concentrations are entered.</p>
             </section>
 
             <section class="block">
-              <h2 class="section-rule">Genome for Eq. 9</h2>
+              <h2 class="section-rule">Genome constants for Equation 9</h2>
               <div class="fields two">
                 <label class="field">
-                  <span>Length (bp)</span>
+                  <span>Genome length (bp)</span>
                   <input
                     id="genomeLength"
                     data-error-id="genomeLength"
@@ -231,7 +231,7 @@
                   />
                 </label>
                 <label class="field">
-                  <span>Mass term</span>
+                  <span>Mass term in Equation 9</span>
                   <input
                     id="molecularWeight"
                     data-error-id="molecularWeight"
@@ -241,49 +241,50 @@
                   />
                 </label>
               </div>
-              <p class="hint">MS2 uses 3569 bp and 330. T4 uses 169000 bp and 660. Edit these only for another virus.</p>
+              <p class="hint">MS2 uses 3569 base pairs and a mass term of 330. T4 uses 169000 base pairs and a mass term of 660. Change these values only for a different virus.</p>
             </section>
 
             <section class="block">
               <div class="section-head">
-                <h2 class="section-rule">Harvested parts</h2>
-                <button type="button" id="add-part" class="secondary">Add a part</button>
+                <h2 class="section-rule">Harvested plant parts</h2>
+                <button type="button" id="add-part" class="secondary">Add part</button>
               </div>
               <p class="hint">
-                Eq. 2 and Eq. 3 turn plaques into an infective total. Leave the plaque boxes empty if you already
-                have that total. Eq. 9 stays out of the closure until you mark it.
+                Equations 2 and 3 convert plaque counts to an infective total. If that total is already known,
+                leave the plaque fields empty. Equation 9 is excluded from the closure unless the box for that
+                part is selected.
               </p>
               <div id="parts"></div>
             </section>
 
             <section class="block">
-              <h2 class="section-rule">Ratios, Eq. 7 and Eq. 8</h2>
+              <h2 class="section-rule">Translocation and bioconcentration, Equations 7 and 8</h2>
               <div class="fields three">
                 <label class="field">
-                  <span>Target part</span>
+                  <span>Target part particles</span>
                   <input id="targetParticles" data-error-id="targetParticles" type="text" inputmode="decimal" spellcheck="false" />
                 </label>
                 <label class="field">
-                  <span>Root</span>
+                  <span>Root particles</span>
                   <input id="rootParticles" data-error-id="rootParticles" type="text" inputmode="decimal" spellcheck="false" />
                 </label>
                 <label class="field">
-                  <span>Water</span>
+                  <span>Water particles</span>
                   <input id="waterParticles" data-error-id="waterParticles" type="text" inputmode="decimal" spellcheck="false" />
                 </label>
               </div>
-              <p class="hint">Use one particle unit for all three. These ratios do not enter the closure.</p>
+              <p class="hint">Use the same particle unit for all three values. These ratios are reported separately from the closure.</p>
             </section>
 
             <details class="block">
-              <summary>Whole-herb mixture, Eq. 5</summary>
+              <summary>Whole-plant mixture, Equation 5</summary>
               <div class="fields two">
                 <label class="field">
                   <span>Mixture titer</span>
                   <input id="mixtureA" data-error-id="mixtureA" type="text" inputmode="decimal" spellcheck="false" />
                 </label>
                 <label class="field">
-                  <span>Extract volume (mL)</span>
+                  <span>Mixture extract volume (mL)</span>
                   <input id="mixtureExtract" data-error-id="mixtureExtract" type="text" inputmode="decimal" spellcheck="false" />
                 </label>
                 <label class="field">
@@ -291,96 +292,98 @@
                   <input id="mixtureSum" data-error-id="mixtureSum" type="text" inputmode="decimal" spellcheck="false" />
                 </label>
                 <label class="field">
-                  <span>Whole herb fresh weight (g)</span>
+                  <span>Whole plant fresh weight (g)</span>
                   <input id="mixtureHerb" data-error-id="mixtureHerb" type="text" inputmode="decimal" spellcheck="false" />
                 </label>
               </div>
             </details>
 
             <div class="actions no-print">
-              <button type="button" id="save-sheet">Save sheet</button>
+              <button type="button" id="save-sheet">Save record</button>
               <button type="button" id="export-json" class="secondary">Export JSON</button>
               <button type="button" id="export-csv" class="secondary">Export CSV</button>
-              <button type="button" id="copy-notebook" class="secondary">Copy lines</button>
+              <button type="button" id="copy-notebook" class="secondary">Copy results</button>
               <button type="button" id="print-sheet" class="secondary">Print</button>
             </div>
           </form>
 
           <aside id="results" class="results label-sheet" aria-labelledby="results-title">
-            <p class="sheet-kicker">Closure</p>
-            <h2 id="results-title">Running balance</h2>
+            <p class="sheet-kicker">Mass-balance closure</p>
+            <h2 id="results-title">Calculated balance</h2>
             <p id="result-lead"></p>
             <ul id="result-errors"></ul>
             <dl id="result-numbers"></dl>
             <div id="result-parts"></div>
-            <h3 class="sheet-kicker">Notebook</h3>
+            <h3 class="sheet-kicker">Result summary</h3>
             <pre id="notebook" class="notebook"></pre>
           </aside>
         </div>
       </section>
 
       <section id="view-journal" hidden>
-        <p class="sheet-kicker">Saved sheets</p>
-        <h1 tabindex="-1">Journal</h1>
-        <p id="journal-count">No sheets on this browser.</p>
-        <p id="journal-empty" class="ink-empty">No sheets on this browser. Save one from the sheet.</p>
+        <p class="sheet-kicker">Stored records</p>
+        <h1 tabindex="-1">Records</h1>
+        <p id="journal-count">No records are stored in this browser.</p>
+        <p id="journal-empty" class="ink-empty">No records are stored in this browser. Save a record from the calculation sheet.</p>
         <ul id="journal-list" class="journal-list"></ul>
       </section>
 
       <section id="view-limits" hidden>
-        <p class="sheet-kicker">What this sheet will not do</p>
+        <p class="sheet-kicker">Scope of the calculation</p>
         <h1 tabindex="-1">Limits</h1>
         <div class="prose">
           <p>
-            The sheet applies Eq. 1 to Eq. 9 from Zure, Kuo and Drizo,
-            <em>Chemosphere</em> 2024;351:141101.
+            This sheet applies Equations 1 to 9 from Zure, Kuo and Drizo,
+            <em>Chemosphere</em> 2024, volume 351, article 141101.
             <a href="https://doi.org/10.1016/j.chemosphere.2023.141101">doi:10.1016/j.chemosphere.2023.141101</a>
           </p>
-          <p>It does not measure a sample. It does not invent a titer.</p>
+          <p>The user must enter each measurement. The sheet does not create a titer.</p>
           <p>
-            Use one unit for the spike, the water and the plant totals. A PFU is not a gene copy. Eq. 9
-            reports viral particles per mL. Those particles stay out of the closure unless you mark the part.
+            Use one unit for the initial spike, the water and the plant totals. Plaque-forming units and gene
+            copies are different units. Equation 9 reports viral particles per millilitre. Those particles are
+            excluded from the closure unless the part is selected.
           </p>
-          <p>Eq. 2 divides by the dilution you type. A thousand-fold dilution is 0.001.</p>
+          <p>Equation 2 divides by the dilution fraction that is entered. A 1000-fold dilution is entered as 0.001.</p>
           <p>
-            Blank decay comes off the spiked total before the closure. That is the herb-free control in the
-            paper.
-          </p>
-          <p>
-            A positive residual is spike that is not in the water or the parts. A negative residual means the
-            water and the parts add up to more than the adjusted spike.
+            Blank decay is subtracted from the spiked total before closure. This decay is measured in the
+            herb-free control described in the paper.
           </p>
           <p>
-            The MS2 example uses illustrative part totals from the worked example in this repository. It is
-            not a new measurement.
+            A positive residual is the portion of the adjusted initial amount that is not recovered in the water
+            or the plant parts. A negative residual means the water and the plant parts exceed the adjusted
+            initial amount.
           </p>
-          <p>Records stay in this browser. There is no account. Clearing site data deletes the journal.</p>
+          <p>
+            The MS2 example uses illustrative part totals from the worked example in this repository. Those
+            totals are not a new measurement.
+          </p>
+          <p>Records remain in this browser. There is no account. Clearing site data deletes the stored records.</p>
         </div>
       </section>
     </main>
     <footer class="wrap footer">
       <p id="net-status" class="hint"></p>
       <p>
-        Companion to
-        <a href="https://doi.org/10.1016/j.chemosphere.2023.141101">Zure, Kuo and Drizo, Chemosphere 2024</a>.
-        The sheet does not enter a number you left blank.
+        Calculation sheet for
+        <a href="https://doi.org/10.1016/j.chemosphere.2023.141101">Zure, Kuo and Drizo, Chemosphere (2024)</a>.
+        A field that is left empty is omitted from the calculation.
       </p>
     </footer>
     <div id="live-bar" class="live-bar" aria-live="polite">
       <span>Closure <strong id="bar-closure">n/a</strong></span>
       <span>Residual <strong id="bar-residual">n/a</strong></span>
-      <span>PE <strong id="bar-pe">n/a</strong></span>
+      <span>Efficiency <strong id="bar-pe">n/a</strong></span>
     </div>
 
     <template id="part-template">
       <fieldset class="part ink-frame" data-part>
-        <legend class="legend-name">Part</legend>
+        <legend class="legend-name">Plant part</legend>
         <div class="part-toolbar">
-          <button type="button" class="secondary" data-remove>Remove</button>
+          <button type="button" class="secondary" data-remove>Remove part</button>
         </div>
         <div class="fields three">
           <label class="field">
-            <span>Name</span>
+            <span>Part name</span>
             <input data-field="name" type="text" autocomplete="off" />
           </label>
           <label class="field">
@@ -388,7 +391,7 @@
             <input data-field="mass" data-error-key="mass" type="text" inputmode="decimal" spellcheck="false" />
           </label>
           <label class="field">
-            <span>Extract volume (mL)</span>
+            <span>Crude extract volume (mL)</span>
             <input data-field="extract" data-error-key="extract" type="text" inputmode="decimal" spellcheck="false" />
           </label>
           <label class="field">
@@ -396,11 +399,11 @@
             <input data-field="plaque" data-error-key="plaque" type="text" inputmode="decimal" spellcheck="false" />
           </label>
           <label class="field">
-            <span>Dilution</span>
+            <span>Dilution fraction</span>
             <input data-field="dilution" data-error-key="dilution" type="text" inputmode="decimal" spellcheck="false" placeholder="0.001" />
           </label>
           <label class="field">
-            <span>Inoculum (mL)</span>
+            <span>Inoculum volume (mL)</span>
             <input data-field="inoculum" data-error-key="inoculum" type="text" inputmode="decimal" spellcheck="false" placeholder="0.1" />
           </label>
           <label class="field">
@@ -412,26 +415,26 @@
             <input data-field="inactivated" data-error-key="inactivated" type="text" inputmode="decimal" spellcheck="false" />
           </label>
           <label class="field">
-            <span>Inactivated fraction</span>
+            <span>Inactivated fraction of the infective total</span>
             <input data-field="fraction" data-error-key="fraction" type="text" inputmode="decimal" spellcheck="false" placeholder="0.35" />
           </label>
           <label class="field">
-            <span>NanoDrop DNA (ng/µL)</span>
+            <span>DNA concentration (ng/µL)</span>
             <input data-field="dna" data-error-key="dna" type="text" inputmode="decimal" spellcheck="false" />
           </label>
         </div>
         <p class="hint">
-          Eq. 2 divides by the dilution. A thousand-fold dilution is 0.001. A typed infective total is used
-          only when the plaque boxes are empty. A typed inactivated total replaces the fraction.
+          Equation 2 divides by the dilution fraction. A 1000-fold dilution is entered as 0.001. An infective
+          total is used only when the plaque fields are empty. An inactivated total replaces the fraction.
         </p>
         <label class="check">
           <input data-field="include" type="checkbox" />
-          <span>Add this HDp total to the closure</span>
+          <span>Include this highly degraded particle total in the closure</span>
         </label>
       </fieldset>
     </template>
     <noscript>
-      <p class="wrap">This sheet needs JavaScript. The equations run in the browser and nothing is uploaded.</p>
+      <p class="wrap">This sheet requires JavaScript. The equations are calculated in the browser. No data are uploaded.</p>
     </noscript>
     <script type="module" src="./app.mjs"></script>
   </body>

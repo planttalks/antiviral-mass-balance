@@ -1,7 +1,7 @@
 {
   "name": "Antiviral mass-balance sheet",
   "short_name": "Mass balance",
-  "description": "Field sheet for pre-harvest antiviral mass balance.",
+  "description": "Calculation sheet for the pre-harvest antiviral mass balance. Equations 1 to 9 are applied in the browser.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
