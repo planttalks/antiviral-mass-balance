@@ -20,7 +20,10 @@ Out of scope:
 git clone https://github.com/planttalks/antiviral-mass-balance.git
 cd antiviral-mass-balance
 pip install -e ".[dev]"
+python field-sheet/serve.py
 ```
+
+Open [http://127.0.0.1:43118](http://127.0.0.1:43118). `npm run dev` and `npm start` start the same server.
 
 ## Before submitting a pull request
 

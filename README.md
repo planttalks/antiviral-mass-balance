@@ -8,17 +8,19 @@ Companion Python module for Eq.1-Eq.9 and pre-harvest mass-balance calculations 
 
 Zure D, Kuo H-W D, Drizo A. *Insights of phytoremediation mechanisms for viruses based on in-vitro, in-vivo and in-silico assessments of selected herbal plants*. Chemosphere. 2024;351:141101. DOI: [10.1016/j.chemosphere.2023.141101](https://doi.org/10.1016/j.chemosphere.2023.141101).
 
-## Field sheet
+## Open the calculation sheet
 
-The calculator opens in a browser. From the repository root:
+Open [http://127.0.0.1:43118](http://127.0.0.1:43118).
+
+From the repository root, start the sheet and then open that address in a browser.
 
 ```bash
 python field-sheet/serve.py
 ```
 
-`npm run dev` and `npm start` start that same server.
+`npm run dev` and `npm start` start the same server.
 
-Open [http://127.0.0.1:43118](http://127.0.0.1:43118). The MS2 example shows a complete closure. Records remain in the browser. No data are uploaded.
+The MS2 example shows a complete closure. Records remain in the browser. No data are uploaded.
 
 Equation 9 is reported for each part and is excluded from the closure until that part is selected. Select it only when the highly degraded total uses the same unit as the initial spike.
 
@@ -43,9 +45,9 @@ Equation 9 is reported for each part and is excluded from the closure until that
 
 ## Required inputs
 
-Three data sources feed the mass-balance. All come directly from the bench.
+Three measurements enter the mass balance. Each value comes from the experiment.
 
-| Source | What you record | Code variable |
+| Source | Measurement | Code variable |
 |---|---|---|
 | **Culture setup** | Total vessel volume (mL) | `culture_volume_ml` |
 | | Stock virus titer (PFU/mL) | `stock_concentration_per_ml` |
@@ -114,7 +116,7 @@ print(f"Closure: {bal.closure_fraction:.1%}  |  Residual: {bal.residual_fraction
 
 See [`examples/ms2_t4_worked_example.py`](examples/ms2_t4_worked_example.py) for a fully annotated run using manuscript numbers, and `tests/test_antiviral_mass_balance.py` for unit tests.
 
-The browser calculator is the [field sheet](#field-sheet). Open [http://127.0.0.1:43118](http://127.0.0.1:43118) after `python field-sheet/serve.py`.
+The calculation sheet is started with `python field-sheet/serve.py`. Open [http://127.0.0.1:43118](http://127.0.0.1:43118).
 
 ## Install
 
