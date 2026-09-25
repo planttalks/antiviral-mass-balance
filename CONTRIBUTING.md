@@ -29,9 +29,10 @@ ruff check .
 ruff format .
 mypy antiviral_mass_balance.py
 pytest --cov=antiviral_mass_balance --cov-fail-under=85
+node --test field-sheet/calc.test.mjs
 ```
 
-All four commands must pass with no errors.
+The Python commands must pass with no errors. The Node command checks the browser sheet. It needs Node 20 or newer.
 
 ## Reporting equation errors
 

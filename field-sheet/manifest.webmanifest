@@ -1,0 +1,11 @@
+{
+  "name": "Antiviral mass-balance sheet",
+  "short_name": "Mass balance",
+  "description": "Field sheet for pre-harvest antiviral mass balance.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#efe6d2",
+  "theme_color": "#efe6d2",
+  "lang": "en"
+}

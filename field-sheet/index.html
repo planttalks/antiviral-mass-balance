@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mass-balance sheet</title>
+    <meta
+      name="description"
+      content="A field sheet for pre-harvest antiviral mass balance. Eq. 1 to Eq. 9, closed in the browser."
+    />
+    <meta name="theme-color" content="#efe6d2" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Mass balance" />
+    <link rel="icon" href="./favicon.ico" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,500;0,8..60,600;1,8..60,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./sheet.css" />
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to the sheet</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="wordmark" href="#sheet">Mass-balance sheet</a>
+        <nav aria-label="Sections">
+          <a href="#sheet" data-view="sheet">Sheet</a>
+          <a href="#journal" data-view="journal">Journal</a>
+          <a href="#limits" data-view="limits">Limits</a>
+        </nav>
+      </div>
+    </header>
+    <main id="content" class="wrap">
+      <section id="view-sheet">
+        <div class="intro">
+          <div>
+            <p class="sheet-kicker">Spike, blank, parts, closure</p>
+            <h1 tabindex="-1">What the vessel still holds.</h1>
+            <p class="lede">
+              Enter the culture, the blank and each harvested part. The sheet applies Eq. 1 to Eq. 9 and
+              closes the pre-harvest balance.
+            </p>
+            <div class="actions no-print">
+              <button type="button" id="load-ms2">Load MS2 example</button>
+              <button type="button" id="load-t4" class="secondary">Load T4 water</button>
+              <button type="button" id="clear-sheet" class="secondary">Clear</button>
+            </div>
+            <p id="status" class="hint" role="status"></p>
+          </div>
+          <aside class="label-sheet">
+            <p class="sheet-kicker">On this browser</p>
+            <p id="browser-count">No sheets on this browser.</p>
+            <p class="hint">One unit per sheet. A PFU is not a gene copy.</p>
+            <p><a href="#limits">Read the limits</a></p>
+          </aside>
+        </div>
+
+        <div class="sheet-grid">
+          <form id="sheet-form" novalidate>
+            <section class="block">
+              <h2 class="section-rule">Sheet</h2>
+              <div class="fields two">
+                <label class="field">
+                  <span>Herb</span>
+                  <input id="herb" name="herb" type="text" autocomplete="off" />
+                </label>
+                <label class="field">
+                  <span>Virus</span>
+                  <select id="virus" name="virus">
+                    <option value="ms2">MS2</option>
+                    <option value="t4">T4</option>
+                    <option value="other">Other</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Unit</span>
+                  <select id="unitSystem" name="unitSystem">
+                    <option value="PFU">PFU</option>
+                    <option value="gene copies">Gene copies</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Operator</span>
+                  <input id="operator" name="operator" type="text" autocomplete="name" />
+                </label>
+                <label class="field">
+                  <span>Date</span>
+                  <input id="date" name="date" type="date" />
+                </label>
+                <label class="field">
+                  <span>Hours</span>
+                  <input id="hours" name="hours" type="text" inputmode="decimal" spellcheck="false" />
+                </label>
+              </div>
+              <label class="field">
+                <span>Notes</span>
+                <textarea id="notes" name="notes" rows="3"></textarea>
+              </label>
+            </section>
+
+            <section class="block">
+              <h2 class="section-rule">Spike</h2>
+              <div class="fields three">
+                <label class="field">
+                  <span>Stock concentration</span>
+                  <input
+                    id="stockConcentration"
+                    data-error-id="stockConcentration"
+                    type="text"
+                    inputmode="decimal"
+                    spellcheck="false"
+                    placeholder="2e8"
+                  />
+                </label>
+                <label class="field">
+                  <span>Stock volume (mL)</span>
+                  <input
+                    id="stockVolumeMl"
+                    data-error-id="stockVolumeMl"
+                    type="text"
+                    inputmode="decimal"
+                    spellcheck="false"
+                    placeholder="1"
+                  />
+                </label>
+                <label class="field">
+                  <span>Diluent volume (mL)</span>
+                  <input
+                    id="diluentVolumeMl"
+                    data-error-id="diluentVolumeMl"
+                    type="text"
+                    inputmode="decimal"
+                    spellcheck="false"
+                    placeholder="50"
+                  />
+                </label>
+              </div>
+              <label class="field">
+                <span>Volume at harvest (mL)</span>
+                <input
+                  id="cultureVolumeMl"
+                  data-error-id="cultureVolumeMl"
+                  type="text"
+                  inputmode="decimal"
+                  spellcheck="false"
+                  placeholder="Blank uses stock plus diluent"
+                />
+              </label>
+              <p id="spike-hint" class="hint">C0 appears here after the stock and the volumes.</p>
+            </section>
+
+            <section class="block">
+              <h2 class="section-rule">Blank, Eq. 1</h2>
+              <div class="choice-row">
+                <label class="check">
+                  <input type="radio" name="blankMode" value="percent" checked />
+                  <span>I have the blank percent</span>
+                </label>
+                <label class="check">
+                  <input type="radio" name="blankMode" value="pair" />
+                  <span>Compute it from two titers</span>
+                </label>
+              </div>
+              <div id="blank-percent-fields" class="fields">
+                <label class="field">
+                  <span>Blank decay (%)</span>
+                  <input
+                    id="blankDecayPercent"
+                    data-error-id="blankDecayPercent"
+                    type="text"
+                    inputmode="decimal"
+                    spellcheck="false"
+                    placeholder="2.3"
+                  />
+                </label>
+              </div>
+              <div id="blank-pair-fields" class="fields two" hidden>
+                <label class="field">
+                  <span>Blank initial</span>
+                  <input
+                    id="blankInitial"
+                    data-error-id="blankInitial"
+                    type="text"
+                    inputmode="decimal"
+                    spellcheck="false"
+                  />
+                </label>
+                <label class="field">
+                  <span>Blank at harvest</span>
+                  <input
+                    id="blankFinal"
+                    data-error-id="blankFinal"
+                    type="text"
+                    inputmode="decimal"
+                    spellcheck="false"
+                  />
+                </label>
+              </div>
+              <p id="blank-hint" class="hint">Blank decay is removed before the closure.</p>
+            </section>
+
+            <section class="block">
+              <h2 class="section-rule">Water at harvest, Eq. 6</h2>
+              <label class="field">
+                <span>Water concentration</span>
+                <input
+                  id="waterConcentration"
+                  data-error-id="waterConcentration"
+                  type="text"
+                  inputmode="decimal"
+                  spellcheck="false"
+                />
+              </label>
+              <p id="water-hint" class="hint">Removal from the bulk water appears here.</p>
+            </section>
+
+            <section class="block">
+              <h2 class="section-rule">Genome for Eq. 9</h2>
+              <div class="fields two">
+                <label class="field">
+                  <span>Length (bp)</span>
+                  <input
+                    id="genomeLength"
+                    data-error-id="genomeLength"
+                    type="text"
+                    inputmode="decimal"
+                    spellcheck="false"
+                  />
+                </label>
+                <label class="field">
+                  <span>Mass term</span>
+                  <input
+                    id="molecularWeight"
+                    data-error-id="molecularWeight"
+                    type="text"
+                    inputmode="decimal"
+                    spellcheck="false"
+                  />
+                </label>
+              </div>
+              <p class="hint">MS2 uses 3569 bp and 330. T4 uses 169000 bp and 660. Edit these only for another virus.</p>
+            </section>
+
+            <section class="block">
+              <div class="section-head">
+                <h2 class="section-rule">Harvested parts</h2>
+                <button type="button" id="add-part" class="secondary">Add a part</button>
+              </div>
+              <p class="hint">
+                Eq. 2 and Eq. 3 turn plaques into an infective total. Leave the plaque boxes empty if you already
+                have that total. Eq. 9 stays out of the closure until you mark it.
+              </p>
+              <div id="parts"></div>
+            </section>
+
+            <section class="block">
+              <h2 class="section-rule">Ratios, Eq. 7 and Eq. 8</h2>
+              <div class="fields three">
+                <label class="field">
+                  <span>Target part</span>
+                  <input id="targetParticles" data-error-id="targetParticles" type="text" inputmode="decimal" spellcheck="false" />
+                </label>
+                <label class="field">
+                  <span>Root</span>
+                  <input id="rootParticles" data-error-id="rootParticles" type="text" inputmode="decimal" spellcheck="false" />
+                </label>
+                <label class="field">
+                  <span>Water</span>
+                  <input id="waterParticles" data-error-id="waterParticles" type="text" inputmode="decimal" spellcheck="false" />
+                </label>
+              </div>
+              <p class="hint">Use one particle unit for all three. These ratios do not enter the closure.</p>
+            </section>
+
+            <details class="block">
+              <summary>Whole-herb mixture, Eq. 5</summary>
+              <div class="fields two">
+                <label class="field">
+                  <span>Mixture titer</span>
+                  <input id="mixtureA" data-error-id="mixtureA" type="text" inputmode="decimal" spellcheck="false" />
+                </label>
+                <label class="field">
+                  <span>Extract volume (mL)</span>
+                  <input id="mixtureExtract" data-error-id="mixtureExtract" type="text" inputmode="decimal" spellcheck="false" />
+                </label>
+                <label class="field">
+                  <span>Sum of part fresh weights (g)</span>
+                  <input id="mixtureSum" data-error-id="mixtureSum" type="text" inputmode="decimal" spellcheck="false" />
+                </label>
+                <label class="field">
+                  <span>Whole herb fresh weight (g)</span>
+                  <input id="mixtureHerb" data-error-id="mixtureHerb" type="text" inputmode="decimal" spellcheck="false" />
+                </label>
+              </div>
+            </details>
+
+            <div class="actions no-print">
+              <button type="button" id="save-sheet">Save sheet</button>
+              <button type="button" id="export-json" class="secondary">Export JSON</button>
+              <button type="button" id="export-csv" class="secondary">Export CSV</button>
+              <button type="button" id="copy-notebook" class="secondary">Copy lines</button>
+              <button type="button" id="print-sheet" class="secondary">Print</button>
+            </div>
+          </form>
+
+          <aside id="results" class="results label-sheet" aria-labelledby="results-title">
+            <p class="sheet-kicker">Closure</p>
+            <h2 id="results-title">Running balance</h2>
+            <p id="result-lead"></p>
+            <ul id="result-errors"></ul>
+            <dl id="result-numbers"></dl>
+            <div id="result-parts"></div>
+            <h3 class="sheet-kicker">Notebook</h3>
+            <pre id="notebook" class="notebook"></pre>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-journal" hidden>
+        <p class="sheet-kicker">Saved sheets</p>
+        <h1 tabindex="-1">Journal</h1>
+        <p id="journal-count">No sheets on this browser.</p>
+        <p id="journal-empty" class="ink-empty">No sheets on this browser. Save one from the sheet.</p>
+        <ul id="journal-list" class="journal-list"></ul>
+      </section>
+
+      <section id="view-limits" hidden>
+        <p class="sheet-kicker">What this sheet will not do</p>
+        <h1 tabindex="-1">Limits</h1>
+        <div class="prose">
+          <p>
+            The sheet applies Eq. 1 to Eq. 9 from Zure, Kuo and Drizo,
+            <em>Chemosphere</em> 2024;351:141101.
+            <a href="https://doi.org/10.1016/j.chemosphere.2023.141101">doi:10.1016/j.chemosphere.2023.141101</a>
+          </p>
+          <p>It does not measure a sample. It does not invent a titer.</p>
+          <p>
+            Use one unit for the spike, the water and the plant totals. A PFU is not a gene copy. Eq. 9
+            reports viral particles per mL. Those particles stay out of the closure unless you mark the part.
+          </p>
+          <p>Eq. 2 divides by the dilution you type. A thousand-fold dilution is 0.001.</p>
+          <p>
+            Blank decay comes off the spiked total before the closure. That is the herb-free control in the
+            paper.
+          </p>
+          <p>
+            A positive residual is spike that is not in the water or the parts. A negative residual means the
+            water and the parts add up to more than the adjusted spike.
+          </p>
+          <p>
+            The MS2 example uses illustrative part totals from the worked example in this repository. It is
+            not a new measurement.
+          </p>
+          <p>Records stay in this browser. There is no account. Clearing site data deletes the journal.</p>
+        </div>
+      </section>
+    </main>
+    <footer class="wrap footer">
+      <p id="net-status" class="hint"></p>
+      <p>
+        Companion to
+        <a href="https://doi.org/10.1016/j.chemosphere.2023.141101">Zure, Kuo and Drizo, Chemosphere 2024</a>.
+        The sheet does not enter a number you left blank.
+      </p>
+    </footer>
+    <div id="live-bar" class="live-bar" aria-live="polite">
+      <span>Closure <strong id="bar-closure">n/a</strong></span>
+      <span>Residual <strong id="bar-residual">n/a</strong></span>
+      <span>PE <strong id="bar-pe">n/a</strong></span>
+    </div>
+
+    <template id="part-template">
+      <fieldset class="part ink-frame" data-part>
+        <legend class="legend-name">Part</legend>
+        <div class="part-toolbar">
+          <button type="button" class="secondary" data-remove>Remove</button>
+        </div>
+        <div class="fields three">
+          <label class="field">
+            <span>Name</span>
+            <input data-field="name" type="text" autocomplete="off" />
+          </label>
+          <label class="field">
+            <span>Fresh weight (g)</span>
+            <input data-field="mass" data-error-key="mass" type="text" inputmode="decimal" spellcheck="false" />
+          </label>
+          <label class="field">
+            <span>Extract volume (mL)</span>
+            <input data-field="extract" data-error-key="extract" type="text" inputmode="decimal" spellcheck="false" />
+          </label>
+          <label class="field">
+            <span>Plaque count</span>
+            <input data-field="plaque" data-error-key="plaque" type="text" inputmode="decimal" spellcheck="false" />
+          </label>
+          <label class="field">
+            <span>Dilution</span>
+            <input data-field="dilution" data-error-key="dilution" type="text" inputmode="decimal" spellcheck="false" placeholder="0.001" />
+          </label>
+          <label class="field">
+            <span>Inoculum (mL)</span>
+            <input data-field="inoculum" data-error-key="inoculum" type="text" inputmode="decimal" spellcheck="false" placeholder="0.1" />
+          </label>
+          <label class="field">
+            <span>Infective total</span>
+            <input data-field="infective" data-error-key="infective" type="text" inputmode="decimal" spellcheck="false" />
+          </label>
+          <label class="field">
+            <span>Inactivated total</span>
+            <input data-field="inactivated" data-error-key="inactivated" type="text" inputmode="decimal" spellcheck="false" />
+          </label>
+          <label class="field">
+            <span>Inactivated fraction</span>
+            <input data-field="fraction" data-error-key="fraction" type="text" inputmode="decimal" spellcheck="false" placeholder="0.35" />
+          </label>
+          <label class="field">
+            <span>NanoDrop DNA (ng/µL)</span>
+            <input data-field="dna" data-error-key="dna" type="text" inputmode="decimal" spellcheck="false" />
+          </label>
+        </div>
+        <p class="hint">
+          Eq. 2 divides by the dilution. A thousand-fold dilution is 0.001. A typed infective total is used
+          only when the plaque boxes are empty. A typed inactivated total replaces the fraction.
+        </p>
+        <label class="check">
+          <input data-field="include" type="checkbox" />
+          <span>Add this HDp total to the closure</span>
+        </label>
+      </fieldset>
+    </template>
+    <noscript>
+      <p class="wrap">This sheet needs JavaScript. The equations run in the browser and nothing is uploaded.</p>
+    </noscript>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>
