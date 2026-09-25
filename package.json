@@ -1,0 +1,8 @@
+{
+  "name": "antiviral-mass-balance",
+  "private": true,
+  "scripts": {
+    "dev": "python3 field-sheet/serve.py || python field-sheet/serve.py",
+    "start": "python3 field-sheet/serve.py || python field-sheet/serve.py"
+  }
+}

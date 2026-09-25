@@ -8,6 +8,20 @@ Companion Python module for Eq.1-Eq.9 and pre-harvest mass-balance calculations 
 
 Zure D, Kuo H-W D, Drizo A. *Insights of phytoremediation mechanisms for viruses based on in-vitro, in-vivo and in-silico assessments of selected herbal plants*. Chemosphere. 2024;351:141101. DOI: [10.1016/j.chemosphere.2023.141101](https://doi.org/10.1016/j.chemosphere.2023.141101).
 
+## Field sheet
+
+The calculator opens in a browser. From the repository root:
+
+```bash
+python field-sheet/serve.py
+```
+
+`npm run dev` and `npm start` start that same server.
+
+Open [http://127.0.0.1:43118](http://127.0.0.1:43118). Load the MS2 example to see a full closure. Records stay in the browser. Nothing is uploaded.
+
+Eq. 9 is shown on each part and left out of the closure until you mark it. Mark it only when that total is already in the same unit as the spike.
+
 ## Scope
 
 - Implements Eq.1-Eq.9 from the manuscript methods
@@ -100,23 +114,7 @@ print(f"Closure: {bal.closure_fraction:.1%}  |  Residual: {bal.residual_fraction
 
 See [`examples/ms2_t4_worked_example.py`](examples/ms2_t4_worked_example.py) for a fully annotated run using manuscript numbers, and `tests/test_antiviral_mass_balance.py` for unit tests.
 
-## Field sheet
-
-The same equations are in a browser worksheet at [`field-sheet/`](field-sheet/index.html). It is meant to be used while the assay numbers are in front of you.
-
-```bash
-python -m http.server 43118 -d field-sheet
-```
-
-Open [http://127.0.0.1:43118](http://127.0.0.1:43118). Load the MS2 example to see a full closure. Records stay in the browser. Nothing is uploaded.
-
-Eq. 9 (highly degraded particles) is shown on each part and left out of the closure until you mark it. Mark it only when that total is already in the same unit as the spike.
-
-```bash
-node --test field-sheet/calc.test.mjs
-```
-
-When Node is installed, pytest also compares `field-sheet/calc.mjs` with this module.
+The browser calculator is the [field sheet](#field-sheet). Open [http://127.0.0.1:43118](http://127.0.0.1:43118) after `python field-sheet/serve.py`.
 
 ## Install
 
