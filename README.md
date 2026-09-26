@@ -116,8 +116,6 @@ print(f"Closure: {bal.closure_fraction:.1%}  |  Residual: {bal.residual_fraction
 
 See [`examples/ms2_t4_worked_example.py`](examples/ms2_t4_worked_example.py) for a fully annotated run using manuscript numbers, and `tests/test_antiviral_mass_balance.py` for unit tests.
 
-The calculation sheet is started with `python field-sheet/serve.py`. Open [http://127.0.0.1:43118](http://127.0.0.1:43118).
-
 ## Install
 
 ```bash
